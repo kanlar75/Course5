@@ -26,7 +26,7 @@ class HeadHunterAPI:
                                     headers=self.headers).json()
 
             employers_dic = {'employer_id': response['id'], 'employer_name':
-                             response['name'],
+                response['name'],
                              'url': response['alternate_url'],
                              'open_vac': response['open_vacancies']}
             emp_list_hh.append(employers_dic)
@@ -74,3 +74,43 @@ class HeadHunterAPI:
                 vac_dict_hh['date_pub'] = data_hh['items'][i]['published_at']
                 vac_list_hh.append(vac_dict_hh)
         return vac_list_hh
+
+
+class DBManager:
+    """ Класс DBManager, который подключается к БД Postgres. """
+
+    def __init__(self, pass_, name='vac'):
+        self.conn = None
+        self.dbname = name
+        self.pass_ = pass_
+        self.conn_new = psycopg2.connect(
+            user='postgres',
+            password=self.pass_,
+            host='localhost',
+            port='5432')
+
+    def set_conn(self):
+        """ Устанавливает соединение с базой данных. """
+
+        self.conn = psycopg2.connect(
+            database=self.dbname,
+            user='postgres',
+            password=self.pass_,
+            host='localhost',
+            port='5432'
+        )
+        return self.conn
+
+    def creat_db(self):
+        """ Создание базы данных. """
+
+        self.conn_new.autocommit = True
+        cur = self.conn_new.cursor()
+        cur.execute("SELECT 1 FROM pg_database WHERE datname='{dbname}'".
+                    format(dbname=self.dbname))
+        if cur.fetchone() is None:
+            cur.execute(f' CREATE DATABASE {self.dbname}')
+        cur.close()
+        self.conn_new.close()
+
+
