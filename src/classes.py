@@ -234,3 +234,23 @@ class DBManager:
             data = cur.fetchall()
         self.conn.close()
         return data
+
+    def get_vacancies_with_higher_salary(self):
+        """
+        Получает список всех вакансий, у которых 'зарплата от' выше средней
+        по всем вакансиям.
+        """
+
+        self.set_conn()
+        with self.conn.cursor() as cur:
+            cur.execute('''select employer_name, title, salary_from, url
+                            from vacancies_tab
+                            rigth join employers_tab USING(employer_id)
+                            where salary_from > (SELECT AVG(salary_from) FROM vacancies_tab)
+                            order by employer_name
+                            ''')
+            data = cur.fetchall()
+        self.conn.close()
+        return data
+
+
