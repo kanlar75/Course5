@@ -113,4 +113,44 @@ class DBManager:
         cur.close()
         self.conn_new.close()
 
+    def creat_table_employers_tab(self):
+        """ Создание таблицы по работодателям. """
+
+        self.set_conn()
+        self.conn.autocommit = True
+        with self.conn.cursor() as cur:
+            cur.execute('''CREATE TABLE IF NOT EXISTS employers_tab(
+            employer_id int PRIMARY KEY,
+            employer_name varchar(255),
+            employer_url varchar(255),
+            open_vac int)
+            '''
+                        )
+        self.conn.close()
+
+    def creat_table_vacancies_tab(self):
+        """ Создание таблицы по вакансиям. """
+
+        self.set_conn()
+        self.conn.autocommit = True
+        with self.conn.cursor() as cur:
+            cur.execute('''CREATE TABLE IF NOT EXISTS vacancies_tab(
+            vacancy_id int PRIMARY KEY,
+            employer_id int REFERENCES employers_tab(employer_id) 
+            on delete restrict
+            on update restrict,
+            title varchar(255),
+            url varchar(255),
+            salary_from int,
+            salary_to int,
+            currency varchar(15),
+            description text,
+            town varchar(255),
+            education text,
+            experience varchar(255),
+            date_pub date);
+            ''')
+        self.conn.close()
+
+
 
