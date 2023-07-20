@@ -152,5 +152,38 @@ class DBManager:
             ''')
         self.conn.close()
 
+    def instance_emp_from_lst(self, emp_list):
+        """ Заполняем таблицу employers_tab из списка """
+
+        self.set_conn()
+        self.conn.autocommit = True
+        with self.conn.cursor() as cur:
+            cur.execute("TRUNCATE TABLE employers_tab CASCADE")
+            for emp in emp_list:
+                cur.execute(
+                    "INSERT INTO employers_tab VALUES (%s, %s, %s, %s)",
+                    (emp['employer_id'], emp['employer_name'],
+                     emp['url'], emp['open_vac']))
+        self.conn.close()
+
+    def instance_vac_from_lst(self, vac_list):
+        """ Заполняем таблицу vacancies_tab из списка. """
+
+        self.set_conn()
+        self.conn.autocommit = True
+        with self.conn.cursor() as cur:
+            for vac in vac_list:
+                cur.execute("INSERT INTO vacancies_tab VALUES (%s, %s, "
+                            "%s, %s, %s, %s, %s, %s, %s, %s, %s,%s)",
+                            (vac['vacancy_id'], vac['employer_id'],
+                             vac["title"],
+                             vac['url'], vac['salary_from'],
+                             vac['salary_to'], vac['currency'],
+                             vac['description'], vac[
+                                 'town'], vac['education'],
+                             vac['experience'], vac['date_pub'],
+                             ))
+        self.conn.close()
+
 
 
