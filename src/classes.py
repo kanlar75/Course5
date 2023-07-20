@@ -9,7 +9,7 @@ class HeadHunterAPI:
 
     headers = {'user-agent': fake_useragent.UserAgent().random}
     params = {'per_page': vacancies_on_page, 'employer_id':
-        employers_id.values(), 'archive': False}
+              employers_id.values(), 'archive': False}
 
     def get_employers(self):
         """
@@ -253,4 +253,21 @@ class DBManager:
         self.conn.close()
         return data
 
+    def get_vacancies_with_keyword(self, keyword):
+        """
+        Получает список всех вакансий, в названии которых содержится
+        переданное в метод слово, например “python” или название города и т.п.
+        """
 
+        self.set_conn()
+        with self.conn.cursor() as cur:
+            cur.execute(f"""SELECT employer_name, title, url, salary_from, 
+                        town, description 
+                        FROM vacancies_tab
+                        rigth join employers_tab USING(employer_id)
+                        WHERE lower(title) LIKE '%{keyword}%' 
+                        OR lower(description) LIKE '%{keyword}%' 
+                        OR lower(town) LIKE '%{keyword}%' """)
+            data = cur.fetchall()
+        self.conn.close()
+        return data
