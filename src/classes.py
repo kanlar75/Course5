@@ -26,7 +26,7 @@ class HeadHunterAPI:
                                     headers=self.headers).json()
 
             employers_dic = {'employer_id': response['id'], 'employer_name':
-                response['name'],
+                             response['name'],
                              'url': response['alternate_url'],
                              'open_vac': response['open_vacancies']}
             emp_list_hh.append(employers_dic)
@@ -83,11 +83,15 @@ class DBManager:
         self.conn = None
         self.dbname = name
         self.pass_ = pass_
-        self.conn_new = psycopg2.connect(
-            user='postgres',
-            password=self.pass_,
-            host='localhost',
-            port='5432')
+        try:
+            self.conn_new_db = psycopg2.connect(
+                user='postgres',
+                password=self.pass_,
+                host='localhost',
+                port='5432')
+        except psycopg2.errors.OperationalError:
+            print('\033[1;31mВозможно не верный пароль. Начните заново.\033[0m')
+            exit()
 
     def set_conn(self):
         """ Устанавливает соединение с базой данных. """
@@ -104,14 +108,14 @@ class DBManager:
     def creat_db(self):
         """ Создание базы данных. """
 
-        self.conn_new.autocommit = True
-        cur = self.conn_new.cursor()
+        self.conn_new_db.autocommit = True
+        cur = self.conn_new_db.cursor()
         cur.execute("SELECT 1 FROM pg_database WHERE datname='{dbname}'".
                     format(dbname=self.dbname))
         if cur.fetchone() is None:
             cur.execute(f' CREATE DATABASE {self.dbname}')
         cur.close()
-        self.conn_new.close()
+        self.conn_new_db.close()
 
     def creat_table_employers_tab(self):
         """ Создание таблицы по работодателям. """
