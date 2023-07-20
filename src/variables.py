@@ -8,13 +8,13 @@ employers_id = {
         "Сбербанк России": 3529,
         "Webtronics": 5843588,
         "ООО СФЕРА": 4402893,
-        "Алроса": 92288,
+        "ООО АЙТИ.СПЕЙС": 2000762,
         "Convergent": 57862,
-        "Mindbox": 205152,
-        "Звук": 1829949,
+        "AERODISK ": 2723603,
+        "Digital Reputation": 3183420,
         "Точка": 2324020,
         "ВТБ": 4181,
-        "B.ART": 9352347
+        "ООО 24Н Софт": 2515455
     }
 
 headers = {'user-agent': fake_useragent.UserAgent().random}
