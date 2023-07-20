@@ -185,5 +185,52 @@ class DBManager:
                              ))
         self.conn.close()
 
+    def get_companies_and_vacancies_count(self):
+        """
+        Получает список всех компаний и количество вакансий у каждой
+        компании.
+        """
 
+        self.set_conn()
+        with self.conn.cursor() as cur:
+            cur.execute(''' 
+                SELECT employer_name, COUNT(*) as total 
+                FROM vacancies_tab
+                RIGHT JOIN employers_tab
+                USING(employer_id)
+                GROUP BY employer_name
+                ORDER BY total DESC
+            ''')
+            data = cur.fetchall()
+        self.conn.close()
+        return data
 
+    def get_all_vacancies(self):
+        """
+        Получает список всех вакансий с указанием названия компании, названия
+        вакансии, зарплаты и ссылки на вакансию.
+        """
+
+        self.set_conn()
+        with self.conn.cursor() as cur:
+            cur.execute(''' 
+                    SELECT employer_name, title, CONCAT('от ', salary_from, 
+                    ' до ', salary_to, ' ', vacancies_tab.currency) as salaryrl, url 
+                    FROM vacancies_tab
+                    JOIN employers_tab USING(employer_id)
+                    ORDER BY employer_name
+                    ''')
+            data = cur.fetchall()
+        self.conn.close()
+        return data
+
+    def get_avg_salary(self):
+        """ Получает среднюю зарплату по вакансиям. """
+
+        self.set_conn()
+        with self.conn.cursor() as cur:
+            cur.execute('''select round(AVG(salary_from)) as from_ from vacancies_tab
+                        ''')
+            data = cur.fetchall()
+        self.conn.close()
+        return data
