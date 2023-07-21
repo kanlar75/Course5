@@ -233,8 +233,11 @@ class DBManager:
 
         self.set_conn()
         with self.conn.cursor() as cur:
-            cur.execute('''select round(AVG(salary_from)) as from_ from vacancies_tab
-                        ''')
+            cur.execute('''select round(AVG(salary_from)) as от, 
+                        (select round(AVG(salary_to)) as до 
+                        from vacancies_tab where salary_to <> 0)
+                        from vacancies_tab
+                        where salary_from <>0''')
             data = cur.fetchall()
         self.conn.close()
         return data
@@ -250,7 +253,8 @@ class DBManager:
             cur.execute('''select employer_name, title, salary_from, url
                             from vacancies_tab
                             rigth join employers_tab USING(employer_id)
-                            where salary_from > (SELECT AVG(salary_from) FROM vacancies_tab)
+                            where salary_from > (SELECT AVG(salary_from) 
+                            FROM vacancies_tab WHERE salary_from <> 0)
                             order by employer_name
                             ''')
             data = cur.fetchall()
