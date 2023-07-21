@@ -46,7 +46,7 @@ def main():
     input('\033[1;92mНажмите "ENTER" для продолжения <--|\033[0m')
     data_3 = db.get_avg_salary()
     print('\n\033[1;34mСРЕДНЯЯ ЗАРПЛАТА\033[0m')
-    print(tabulate(data_3, headers=['Средняя зарплата от'],
+    print(tabulate(data_3, headers=['Средняя зарплата от', 'Средняя зарплата до'],
                    tablefmt='fancy_grid'))
     input('\033[1;92mНажмите "ENTER" для продолжения <--|\033[0m')
     data_4 = db.get_vacancies_with_higher_salary()
